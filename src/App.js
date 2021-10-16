@@ -1,24 +1,36 @@
-import logo from './logo.svg';
-import './App.css';
+import React, {useContext} from 'react';
+import { Redirect } from 'react-router';
+import {AuthContext} from './context/AuthContext';
+import Signup from './pages/Signup';
+import Login from './pages/Login';
+import Home from './pages/Home';
+import {BrowserRouter as Router , Route , Switch} from 'react-router-dom'
+import Rings from './media/rings.svg'
 
 function App() {
+  const {user, isFetching} = useContext(AuthContext);
+  if(isFetching)
+    return <img className="h-screen w-screen" src = {Rings} alt = "Loading"/>
+
+  const isAuthenticated = user != null;
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Switch>
+        <Route exact path = '/' component={Home}/>
+        <Route
+          path = '/signup'
+          render = {(props)=>
+            !isAuthenticated ? <Signup {...props} /> : <Redirect to ='/'/>
+          }
+        />
+        <Route
+          path = '/login'
+          render = {(props)=>
+            !isAuthenticated ? <Login {...props} /> : <Redirect to ='/'/>
+          }
+        />
+      </Switch>
+    </Router>
   );
 }
 
